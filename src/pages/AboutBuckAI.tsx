@@ -264,6 +264,129 @@ const AboutBuckAI = () => {
           </CardContent>
         </Card>
 
+        {/* Buck AI Capabilities Section */}
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Let me give you a comprehensive list of my capabilities in this app! 🚀
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-center">
+                  🧾 Receipt/OCR MCP
+                </h3>
+                <p className="text-gray-600">
+                  Auto-categorize expenses from images and emails with 10x bookkeeping speed.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-center">
+                  📄 Document Processor MCP
+                </h3>
+                <p className="text-gray-600">
+                  Read and analyze financial documents, PDFs, invoices, and spreadsheets for insights.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-center">
+                  📈 Market Data MCP
+                </h3>
+                <p className="text-gray-600">
+                  Access real-time stocks, crypto, and forex data with Wall Street-level insights.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-center">
+                  🔍 Web Search MCP
+                </h3>
+                <p className="text-gray-600">
+                  Gather competitor pricing, industry trends, and business intelligence alerts.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-center">
+                  🏛️ Government Compliance MCP
+                </h3>
+                <p className="text-gray-600">
+                  Stay updated on tax codes, regulatory changes, and compliance requirements.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3 flex items-center">
+                  📊 Current Business Context
+                </h3>
+                <p className="text-gray-600">
+                  I can analyze your specific business data and provide tailored insights!
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+              🧠 Advanced AI Capabilities
+            </h3>
+            <div className="grid md:grid-cols-2 gap-4 text-gray-600">
+              <ul className="space-y-2">
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">•</span>
+                  Real-time market data and economic indicators
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">•</span>
+                  Live cryptocurrency prices and portfolio tracking
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">•</span>
+                  Custom business pattern recognition and learning
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">•</span>
+                  Multi-modal input processing (images, documents, spreadsheets)
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">•</span>
+                  Predictive analytics and forecasting
+                </li>
+              </ul>
+              <ul className="space-y-2">
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">•</span>
+                  Industry-specific insights and benchmarking
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">•</span>
+                  Voice synthesis and multi-language support (8 languages)
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">•</span>
+                  Automated expense categorization and receipt processing
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">•</span>
+                  Government compliance monitoring and tax optimization
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-8 text-center">
+            <p className="text-lg text-gray-700 mb-4">
+              If you have any specific questions or need assistance with a particular area, just let me know! 💬
+            </p>
+          </div>
+        </div>
+
         {/* Call to Action */}
         <div className="text-center space-y-4">
           <h2 className="text-3xl font-bold text-gray-800">
