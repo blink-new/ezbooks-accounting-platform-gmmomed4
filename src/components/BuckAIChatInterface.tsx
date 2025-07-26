@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, Mic, MicOff, Volume2, VolumeX, User, Bot, Sparkles, Brain, TrendingUp, Calculator, FileText, DollarSign, Upload, Image, BarChart3, Zap, Phone, PhoneOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -55,13 +55,21 @@ export default function BuckAIChatInterface({ className = '' }: BuckAIChatInterf
   const fileInputRef = useRef<HTMLInputElement>(null);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const scrollToBottom = useCallback(() => {
+    try {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    } catch (error) {
+      console.error('Scroll error:', error);
+    }
+  }, []);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    try {
+      scrollToBottom();
+    } catch (error) {
+      console.error('Effect error:', error);
+    }
+  }, [messages, scrollToBottom]);
 
   // Process voice message during phone calls
   const processVoiceMessage = async (userInput: string) => {
@@ -124,10 +132,14 @@ export default function BuckAIChatInterface({ className = '' }: BuckAIChatInterf
       }
 
       // Get enhanced context for complex responses
-      const [conversationContext, marketInsights, businessLearnings] = await Promise.all([
+      const [conversationContext, marketInsights, businessLearnings] = await Promise.allSettled([
         Promise.resolve(contextMemory.getFormattedContext(userId)),
-        marketDataService.getBusinessInsights().catch(() => ''),
+        marketDataService.getBusinessInsights(),
         customTraining.getPersonalizedInsights(userId)
+      ]).then(results => [
+        results[0].status === 'fulfilled' ? results[0].value : '',
+        results[1].status === 'fulfilled' ? results[1].value : '',
+        results[2].status === 'fulfilled' ? results[2].value : []
       ]);
 
       // Enhanced system prompt for voice calls
@@ -215,15 +227,31 @@ Respond as Buck AI in a natural, conversational way suitable for voice conversat
 
     } catch (error) {
       console.error('Voice message processing error:', error);
-      setMessages(prev => prev.map(msg => 
-        msg.id === assistantMessageId 
-          ? { 
-              ...msg, 
-              content: "I'm sorry, I had trouble processing your voice message. Could you please repeat that?",
-              isStreaming: false 
-            }
-          : msg
-      ));
+      
+      // Ensure we always have a valid assistant message to update
+      setMessages(prev => {
+        const messageExists = prev.some(msg => msg.id === assistantMessageId);
+        if (messageExists) {
+          return prev.map(msg => 
+            msg.id === assistantMessageId 
+              ? { 
+                  ...msg, 
+                  content: "I'm sorry, I had trouble processing your voice message. Could you please repeat that?",
+                  isStreaming: false 
+                }
+              : msg
+          );
+        } else {
+          // If message doesn't exist, create a new error message
+          return [...prev, {
+            id: assistantMessageId,
+            role: 'assistant' as const,
+            content: "I'm sorry, I had trouble processing your voice message. Could you please repeat that?",
+            timestamp: new Date(),
+            isStreaming: false
+          }];
+        }
+      });
     } finally {
       setIsLoading(false);
       setStreamingMessageId(null);
@@ -305,13 +333,20 @@ Respond as Buck AI in a natural, conversational way suitable for voice conversat
       }
 
       // 🚀 PHASE 2: Get enhanced context, market data, crypto insights, and MCP capabilities
-      const [conversationContext, marketInsights, businessLearnings, cryptoPrices, marketData, complianceAlerts] = await Promise.all([
+      const [conversationContext, marketInsights, businessLearnings, cryptoPrices, marketData, complianceAlerts] = await Promise.allSettled([
         Promise.resolve(contextMemory.getFormattedContext(userId)),
-        marketDataService.getBusinessInsights().catch(() => ''),
+        marketDataService.getBusinessInsights(),
         customTraining.getPersonalizedInsights(userId),
-        cryptoService.getCryptoPrices().catch(() => []),
-        marketDataMCP.getMarketInsights().catch(() => null),
-        governmentComplianceMCP.generateComplianceAlerts('United States', 'small business').catch(() => [])
+        cryptoService.getCryptoPrices(),
+        marketDataMCP.getMarketInsights(),
+        governmentComplianceMCP.generateComplianceAlerts('United States', 'small business')
+      ]).then(results => [
+        results[0].status === 'fulfilled' ? results[0].value : '',
+        results[1].status === 'fulfilled' ? results[1].value : '',
+        results[2].status === 'fulfilled' ? results[2].value : [],
+        results[3].status === 'fulfilled' ? results[3].value : [],
+        results[4].status === 'fulfilled' ? results[4].value : null,
+        results[5].status === 'fulfilled' ? results[5].value : []
       ]);
 
       // Enhanced system prompt with all MCP capabilities
@@ -435,15 +470,31 @@ Respond as Buck AI with enthusiasm, specific expertise, and personalized insight
 
     } catch (error) {
       console.error('Chat error:', error);
-      setMessages(prev => prev.map(msg => 
-        msg.id === assistantMessageId 
-          ? { 
-              ...msg, 
-              content: "I apologize, but I'm having trouble processing your request right now. My advanced systems are temporarily unavailable, but I'm still here to help! Please try again in a moment. 🔄",
-              isStreaming: false 
-            }
-          : msg
-      ));
+      
+      // Ensure we always have a valid assistant message to update
+      setMessages(prev => {
+        const messageExists = prev.some(msg => msg.id === assistantMessageId);
+        if (messageExists) {
+          return prev.map(msg => 
+            msg.id === assistantMessageId 
+              ? { 
+                  ...msg, 
+                  content: "I apologize, but I'm having trouble processing your request right now. My advanced systems are temporarily unavailable, but I'm still here to help! Please try again in a moment. 🔄",
+                  isStreaming: false 
+                }
+              : msg
+          );
+        } else {
+          // If message doesn't exist, create a new error message
+          return [...prev, {
+            id: assistantMessageId,
+            role: 'assistant' as const,
+            content: "I apologize, but I'm having trouble processing your request right now. My advanced systems are temporarily unavailable, but I'm still here to help! Please try again in a moment. 🔄",
+            timestamp: new Date(),
+            isStreaming: false
+          }];
+        }
+      });
     } finally {
       setIsLoading(false);
       setStreamingMessageId(null);
@@ -891,6 +942,58 @@ Respond as Buck AI with enthusiasm, specific expertise, and personalized insight
         );
       });
   };
+
+  // Global error boundary to prevent crashes
+  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    const handleError = (error: ErrorEvent) => {
+      console.error('Global error caught:', error);
+      setHasError(true);
+      setErrorMessage('Buck AI encountered an unexpected error. Please refresh the page.');
+    };
+
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('Unhandled promise rejection:', event.reason);
+      setHasError(true);
+      setErrorMessage('Buck AI encountered a connection error. Please try again.');
+    };
+
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+    return () => {
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
+  }, []);
+
+  if (hasError) {
+    return (
+      <div className={`flex flex-col h-full bg-gradient-to-br from-slate-50 to-blue-50 ${className}`}>
+        <div className="flex-1 flex items-center justify-center p-8">
+          <Card className="max-w-md p-6 text-center">
+            <div className="mb-4">
+              <Brain className="h-12 w-12 mx-auto text-slate-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">Buck AI Needs a Moment</h3>
+            <p className="text-slate-600 mb-4">{errorMessage}</p>
+            <Button 
+              onClick={() => {
+                setHasError(false);
+                setErrorMessage('');
+                window.location.reload();
+              }}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Restart Buck AI
+            </Button>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`flex flex-col h-full bg-gradient-to-br from-slate-50 to-blue-50 ${className}`}>
